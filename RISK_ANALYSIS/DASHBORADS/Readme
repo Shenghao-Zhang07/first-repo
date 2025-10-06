@@ -3,7 +3,7 @@ This folder contains **interactive risk monitoring dashboards** built with Table
 They complement the modeling pipeline by providing a **visual layer for monitoring and decision-making** in consumer lending.
 
 ## Contents
-- **L27_vintage_analysis.twbx**  
+- **vintage_analysis.twbx**  
   Tableau dashboard for **Vintage Curve analysis**, tracking delinquency patterns (e.g., FPD7, FPD15, FPD30, MOB curves) across payout cohorts.  
   Helps to monitor portfolio quality, early default trends, and long-term repayment dynamics.  
 
