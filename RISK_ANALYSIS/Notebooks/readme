@@ -4,6 +4,6 @@ The codes required for the project：
 02_credit_approval.ipynb             
 03_fraud_prevention.ipynb            
 04_feature_selection.ipynb           
-05_model_evaluation.ipynb           
-06_monitoring_swap_in_out.ipynb      
-07_vintage_analysis.ipynb            
+05_model_evaluation.ipynb  
+06_multi_dimensional_interactions.ipynb
+07_monitoring_swap_in_out.ipynb                  
