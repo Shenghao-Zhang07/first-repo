@@ -52,7 +52,7 @@ Results
 - **Monitoring**: Detected feature drift on new 2024 data  
 - **Tableau Dashboard**: Interactive view of key metrics
 
-** Notes on Data and Confidentiality **
+**Notes on Data and Confidentiality**
 To comply with data security and confidentiality policies, all datasets used in this portfolio have been replaced with secure, anonymized, and publicly available data.
 The workflow and analytical results represent the same structure and methodology used in the original risk modeling project, without exposing any internal or client-specific information.
 This portfolio is designed to showcase professional experience in credit risk modeling and data analytics while maintaining full compliance with information protection standards.
