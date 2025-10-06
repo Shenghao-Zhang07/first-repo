@@ -1,2 +1,17 @@
 Dashboards
-The visualized results of the data
+This folder contains **interactive risk monitoring dashboards** built with Tableau.  
+They complement the modeling pipeline by providing a **visual layer for monitoring and decision-making** in consumer lending.
+
+## Contents
+- **L27_vintage_analysis.twbx**  
+  Tableau dashboard for **Vintage Curve analysis**, tracking delinquency patterns (e.g., FPD7, FPD15, FPD30, MOB curves) across payout cohorts.  
+  Helps to monitor portfolio quality, early default trends, and long-term repayment dynamics.  
+
+## Purpose
+- Translate complex **model outputs** into **business-friendly dashboards**.
+- Support **risk management teams** in tracking loan performance, identifying early warning signals, and guiding policy adjustments.
+- Demonstrate the integration of **quantitative models + visualization tools** for practical decision-making.
+
+## Notes
+- Dashboards are built on **synthetic or anonymized datasets** to comply with privacy regulations.  
+- Files are in Tableau packaged workbook format (`.twbx`), which includes data and visualizations.
