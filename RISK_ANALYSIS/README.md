@@ -62,5 +62,3 @@ This portfolio is designed to showcase professional experience in credit risk mo
 # Clone repository 
 git clone https://github.com/Shenghao-Zhang07/first-repo.git
 cd RISK_ANALYSIS
-
-
