@@ -54,9 +54,9 @@ Results
 
 How to Run
 ```bash
-# Clone repository
+# Clone repository 
 git clone https://github.com/YourUsername/risk_portfolio.git](https://github.com/Shenghao-Zhang07/first-repo.git
-cd RISK_ANALYSIS
+cd RISK_ANALYSIS #
 
 
 Notes on Data and Confidentiality
