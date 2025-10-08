@@ -1,0 +1,12 @@
+This project integrates multiple Tableau worksheets into a unified analytical showcase — covering **macro economics**, **sales analytics**, and **business performance monitoring**.
+- Demonstrates visualization of **KPI**, **trend**, **geospatial**, and **correlation** data  
+- Simulates end-to-end analytical storytelling (EDA → Visualization → Insight)  
+- Suitable for **data analyst**, **business intelligence**, and **risk monitoring** roles  
+
+**Main Visual Components:**
+- Boxplot for price distribution analysis  
+- Geographic GDP and sales maps (China & USA)  
+- Funnel chart for customer conversion and retention  
+- Word cloud for product-level profit & sales  
+- Scatter and bar charts for performance evaluation  
+- Time-series trend and Pareto chart for sales insight  
