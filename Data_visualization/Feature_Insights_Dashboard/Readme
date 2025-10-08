@@ -1,0 +1,11 @@
+This dashboard uses the **Titanic** and **Diamonds** public datasets to visualize categorical and numerical relationships.  
+It simulates **risk feature analysis**, **customer segmentation**, and **model explainability** with a credit risk or data science context.
+
+- Demonstrates exploratory analysis of variables before model building  
+- Aligns with scorecard model interpretability (IV, WOE, etc.)  
+- Suitable with risk, analytics, or credit-modeling portfolios  
+
+**key charts:**
+- Doughnut & Pie Charts – categorical distribution visualization  
+- Bar Charts – variable contribution analysis  
+- Average Price Benchmark Line – threshold comparison for risk or performance levels  
