@@ -1,0 +1,142 @@
+===== Capital Structure Data Cleaning – One-Click Script =====
+import warnings, numpy as np, pandas as pd
+warnings.filterwarnings("ignore")
+np.seterr(divide="ignore", invalid="ignore")
+
+# ---------------------- CONFIG ----------------------
+IN_PATH  = "out/funda_panel/panel_merged_precheck.parquet"   
+OUT_PARQ = "out/funda_panel/final_panel_cleaned.parquet"     
+OUT_CSV_SAMPLE = "out/funda_panel/final_panel_sample10k.csv" 
+MIN_FIRM_YEARS = 3  
+
+# Winsorize
+DO_WINSOR = True
+WINSOR_COLS = ["book_leverage","roa","ebitda_margin","cash_holdings","asset_tangibility","log_assets"]
+
+# ---------------------- HELPERS ----------------------
+def to_num(df, cols):
+    for c in cols:
+        if c in df.columns:
+            df[c] = pd.to_numeric(df[c], errors="coerce")
+    return df
+
+def winsorize_s(df, col, p=0.01):
+    if col not in df.columns: 
+        return df
+    lo, hi = df[col].quantile([p, 1-p])
+    df[col] = df[col].clip(lower=lo, upper=hi)
+    return df
+
+def fill_by_firm_median(df, cols):
+    for c in cols:
+        if c in df.columns:
+            df[c] = df.groupby("gvkey")[c].transform(
+                lambda x: x.fillna(x.median()) if x.notna().any() else x
+            )
+    return df
+
+def fill_by_industry_median(df, cols, sic_col="sic"):
+    if sic_col not in df.columns:
+        return df
+    df["sic2"] = df[sic_col].astype(str).str[:2]
+    for c in cols:
+        if c in df.columns:
+            df[c] = df.groupby("sic2")[c].transform(
+                lambda x: x.fillna(x.median()) if x.notna().any() else x
+            )
+    df.drop(columns=["sic2"], inplace=True, errors="ignore")
+    return df
+
+def recompute_book_leverage(df):
+    need = ["dltt","dlc","at"]
+    df = to_num(df, need)
+    den = pd.to_numeric(df["at"], errors="coerce")
+    num = df["dltt"].fillna(0) + df["dlc"].fillna(0)
+    cond = (den.to_numpy() > 0)  
+    df["book_leverage"] = np.where(cond, num/den, np.nan)
+    return df
+
+def basic_stats(name, df):
+    n = len(df)
+    firms = df["gvkey"].nunique() if "gvkey" in df.columns else None
+    yrs = df["fyear"].nunique() if "fyear" in df.columns else None
+    print(f"[{name}] rows: {n:,} | firms: {firms:,} | years: {yrs}")
+
+# ---------------------- MAIN PIPELINE ----------------------
+def clean_panel(in_path=IN_PATH):
+    print("Loading:", in_path)
+    df = pd.read_parquet(in_path)
+    basic_stats("raw", df)
+
+    # -------- 0) same type --------
+    numeric_cols = [
+        "at","lt","sale","ebitda","ppent","dp","che","dvc","ni","dltt","dlc",
+        "log_assets","ebitda_margin","asset_tangibility","cash_holdings","non_debt_tax_shield",
+        "book_leverage"
+    ]
+    df = to_num(df, numeric_cols)
+    df["fyear"] = pd.to_numeric(df.get("fyear"), errors="coerce")
+    if "fyear" in df.columns and "datadate" in df.columns and df["fyear"].isna().any():
+        try:
+            yy = pd.to_datetime(df["datadate"], errors="coerce").dt.year
+            df["fyear"] = df["fyear"].fillna(yy)
+        except Exception:
+            pass
+
+    # -------- 1) Delete the years of "non-operating" companies--------
+    # Condition: If "at", "sale" or "ni" are all absent → Delete; And if "at" and "sale" are both 0 → Delete
+    before = len(df)
+    df = df.dropna(subset=["at","sale","ni"], how="all")
+    df = df[(df["at"].fillna(0) > 0) | (df["sale"].fillna(0) > 0)]
+    print(f"Removed inactive firm-years: {before - len(df):,} dropped")
+    basic_stats("after inactive-drop", df)
+
+    # -------- 2) Classify to fill in the missing values --------
+    # a) Company internal interpolation (smooth scale)
+    if "log_assets" in df.columns:
+        df["log_assets"] = df.groupby("gvkey")["log_assets"].transform(lambda x: x.interpolate(limit_direction="both"))
+
+    # b) Company median filling (mild, without significantly altering the mean value)
+    firm_med_cols = ["roa","ebitda_margin","asset_tangibility","cash_holdings","non_debt_tax_shield"]
+    df = fill_by_firm_median(df, firm_med_cols)
+
+    # c) Industry median floor (two-digit SIC)
+    df = fill_by_industry_median(df, firm_med_cols + ["log_assets"])
+
+    # -------- 3) Re-calculate the leverage --------
+    df = recompute_book_leverage(df)
+
+    # -------- 4) Remove the companies with too few years of observation data --------
+    if "gvkey" in df.columns and "fyear" in df.columns:
+        obs = df.groupby("gvkey")["fyear"].nunique()
+        keep_firms = obs[obs >= MIN_FIRM_YEARS].index
+        before = len(df)
+        df = df[df["gvkey"].isin(keep_firms)]
+        print(f"Dropped firms with <{MIN_FIRM_YEARS} years: {before - len(df):,} rows removed")
+        basic_stats("after firm-year filter", df)
+
+    # -------- 5) Winsorize（1%/99%） --------
+    if DO_WINSOR:
+        for c in WINSOR_COLS:
+            if c in df.columns:
+                df = winsorize_s(df, c, p=0.01)
+        print("Winsorized (1% tails):", WINSOR_COLS)
+
+    # -------- 6) Conclusion: Rows with missing core variables are removed --------
+    core = ["book_leverage","log_assets","roa","asset_tangibility"]
+    before = len(df)
+    df = df.dropna(subset=[c for c in core if c in df.columns])
+    print(f"Dropped rows missing core vars ({core}): {before - len(df):,} rows removed")
+    basic_stats("final", df)
+
+    # -------- 7) Save --------
+    df.to_parquet(OUT_PARQ, index=False)
+    df.sample(min(len(df), 10_000), random_state=42).to_csv(OUT_CSV_SAMPLE, index=False)
+    print("Saved:")
+    print("|", OUT_PARQ)
+    print("|", OUT_CSV_SAMPLE)
+    return df
+
+# ===== Run cleaning =====
+panel_clean = clean_panel()
+panel_clean.head()

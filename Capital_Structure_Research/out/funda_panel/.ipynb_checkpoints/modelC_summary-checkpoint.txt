@@ -1,0 +1,41 @@
+                          PanelOLS Estimation Summary                           
+================================================================================
+Dep. Variable:          book_leverage   R-squared:                        0.2885
+Estimator:                   PanelOLS   R-squared (Between):              0.4745
+No. Observations:              152621   R-squared (Within):               0.2885
+Date:                Tue, Oct 21 2025   R-squared (Overall):              0.3702
+Time:                        19:42:01   Log-likelihood                 -1.52e+05
+Cov. Estimator:             Clustered                                           
+                                        F-statistic:                      5638.2
+Entities:                       13549   P-value                           0.0000
+Avg Obs:                       11.264   Distribution:               F(10,139062)
+Min Obs:                       1.0000                                           
+Max Obs:                       25.000   F-statistic (robust):             213.48
+                                        P-value                           0.0000
+Time periods:                      25   Distribution:               F(10,139062)
+Avg Obs:                       6104.8                                           
+Min Obs:                       4575.0                                           
+Max Obs:                       7924.0                                           
+                                                                                
+                                  Parameter Estimates                                  
+=======================================================================================
+                     Parameter  Std. Err.     T-stat    P-value    Lower CI    Upper CI
+---------------------------------------------------------------------------------------
+const                   1.4624     0.1728     8.4630     0.0000      1.1238      1.8011
+log_assets             -0.1291     0.0133    -9.7239     0.0000     -0.1551     -0.1030
+roa                    -0.2219     0.0065    -34.014     0.0000     -0.2346     -0.2091
+asset_tangibility       0.2451     0.0715     3.4273     0.0006      0.1049      0.3853
+cash_holdings          -0.3173     0.0445    -7.1348     0.0000     -0.4044     -0.2301
+non_debt_tax_shield     0.0109     0.0028     3.9716     0.0001      0.0055      0.0163
+gdp_growth             -2.7135     1.0812    -2.5097     0.0121     -4.8326     -0.5944
+inflation               1.2780     0.6356     2.0108     0.0443      0.0323      2.5237
+fed_funds              -0.0341     0.0117    -2.9102     0.0036     -0.0571     -0.0111
+credit_spread          -0.0979     0.0372    -2.6334     0.0085     -0.1708     -0.0250
+unemp_rate             -0.0120     0.0085    -1.4094     0.1587     -0.0287      0.0047
+=======================================================================================
+
+F-test for Poolability: 7.4956
+P-value: 0.0000
+Distribution: F(13548,139062)
+
+Included effects: Entity
